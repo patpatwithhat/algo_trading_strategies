@@ -1,22 +1,32 @@
 {
   "name": "algo_trading_strategies",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "main": "jest.config.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patpatwithhat/algo_trading_strategies.git"
+  },
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/patpatwithhat/algo_trading_strategies/issues"
+  },
+  "homepage": "https://github.com/patpatwithhat/algo_trading_strategies#readme",
   "dependencies": {
-    "@types/jest": "^27.4.0",
+    "@dydxprotocol/v3-client": "^1.6.4",
     "dotenv": "^16.0.0",
-    "dydx_node_connector": "github:patpatwithhat/dydx_node_connector",
+    "dydx_nodejs_connector": "github:patpatwithhat/dydx_nodejs_connector",
     "jest": "^27.5.1",
-    "ts-jest": "^27.1.3",
     "ts-node": "^10.5.0"
+  },
+  "description": "",
+  "devDependencies": {
+    "@types/jest": "^27.4.1"
   }
 }

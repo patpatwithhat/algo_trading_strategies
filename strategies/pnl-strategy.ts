@@ -1,26 +1,29 @@
-const { Connector } = require('dydx_node_connector')
+import { Market, TimeInForce, OrderType, OrderSide, PositionStatus } from "@dydxprotocol/v3-client";
+import { DYDXConnector, NetworkID } from 'dydx_nodejs_connector'
 
-let connector :any
+
+let connector: DYDXConnector
 async function init() {
-    console.log("init...")
-    connector = await Connector.build(Connector.NetworkID.RopstenTestNet)
+    console.log("init...", DYDXConnector)
+    connector = await DYDXConnector.build(NetworkID.RopstenTestNet)
 }
 
 async function pnlStrategy(openUnder: Number, closeAt: Number) {
-    let positions = await connector.getPositions(undefined, Connector.PositionStatus.OPEN)
+
+    let positions = await connector.getPositions(undefined, PositionStatus.OPEN)
     if (positions === undefined) return //handle timeout error here at some point. Client needs relog after longer time
 
     if (positions.length == 0) { //open inital position
         await connector.createOrder(
-            Connector.OrderSide.BUY,
-            Connector.OrderType.MARKET,
-            Connector.TimeInForce.IOC,
+            OrderSide.BUY,
+            OrderType.MARKET,
+            TimeInForce.IOC,
             undefined,
             "0.2",
             "10000",
             undefined,
             undefined,
-            Connector.DydxMarket.ETH_USD
+            Market.ETH_USD
         )
     }
     else {
@@ -29,29 +32,29 @@ async function pnlStrategy(openUnder: Number, closeAt: Number) {
             const pnl = connector.getPNLInPercent(pos)
             if (pnl < openUnder) { //add another position
                 await connector.createOrder(
-                    Connector.OrderSide.BUY,
-                    Connector.OrderType.MARKET,
-                    Connector.TimeInForce.IOC,
+                    OrderSide.BUY,
+                    OrderType.MARKET,
+                    TimeInForce.IOC,
                     undefined,
                     String(Number(pos.size) * 2),
                     "10000",
                     undefined,
                     undefined,
-                    Connector.DydxMarket.ETH_USD
+                    Market.ETH_USD
                 )
 
             }
             else if (pnl > closeAt) {  //close position with profit
                 await connector.createOrder(
-                    Connector.OrderSide.SELL,
-                    Connector.OrderType.MARKET,
-                    Connector.TimeInForce.IOC,
+                    OrderSide.SELL,
+                    OrderType.MARKET,
+                    TimeInForce.IOC,
                     undefined,
                     pos.size,
                     '1',
                     undefined,
                     undefined,
-                    Connector.DydxMarket.ETH_USD,
+                    Market.ETH_USD,
                 )
             }
         }
