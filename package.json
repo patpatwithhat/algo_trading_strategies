@@ -25,8 +25,8 @@
     "jest": "^27.5.1",
     "ts-node": "^10.5.0"
   },
-  "description": "",
   "devDependencies": {
     "@types/jest": "^27.4.1"
-  }
+  },
+  "description": ""
 }
