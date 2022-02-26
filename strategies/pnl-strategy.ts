@@ -14,10 +14,10 @@ async function pnlStrategy(market: Market, initialQuoteAssetSize: number, sizeMu
     if (positions === undefined) return //handle timeout error here at some point. Client needs relog after longer time
 
     if (positions.length == 0) {
+        console.log("No existing positions found. Creatin new...")
         //For now pretend quote asset is USD
         //Approximate position size based on USD that are wanted to spend (initialQuoteAssetSize)
         let size = await approximateBaseAssetSize(market, initialQuoteAssetSize)
-        console.log(size)
         //open initial position
         openPosition(market, size)
     }
@@ -25,6 +25,7 @@ async function pnlStrategy(market: Market, initialQuoteAssetSize: number, sizeMu
         //is this always one position?
         for (const pos of positions) {
             const pnl = connector.getPNLInPercent(pos)
+            console.log("Market: %s \tPosition-PNL %f", market, pnl)
             if (pnl < openUnder) {
                 //increase position when value drops
                 let size = Number(pos.size) * sizeMultiplier
@@ -48,13 +49,14 @@ async function approximateBaseAssetSize(market: Market, quoteAssetSize: number):
 }
 
 async function openPosition(market: Market, size: Number): Promise<OrderResponseObject>{
+        console.log("Opening new position for market %s of size %f", market, size)
         return await connector.createOrder(
             OrderSide.BUY,
             OrderType.MARKET,
             TimeInForce.IOC,
             undefined,
-            String(size), //size
-            "1000000000", //worst price
+            String(size),
+            "1000000000", //needed worst price max value (see API)
             undefined,
             undefined,
             market
@@ -62,13 +64,14 @@ async function openPosition(market: Market, size: Number): Promise<OrderResponse
 }
 
 async function closePosition(market: Market, size: Number): Promise<OrderResponseObject>{
+        console.log("Reducing position of market %s of size %f", market, size)
         return await connector.createOrder(
             OrderSide.SELL,
             OrderType.MARKET,
             TimeInForce.IOC,
             undefined,
-            String(size), //size
-            "0.1", //cheapest sellpoint
+            String(size),
+            "0.1", //needed, min sell value (see API)
             undefined,
             undefined,
             market
@@ -79,6 +82,6 @@ async function closePosition(market: Market, size: Number): Promise<OrderRespons
 init()
 
 setInterval(async () => {
-    console.log("Executing strategy")
     await pnlStrategy(Market.BTC_USD, 100, 2, -2, 10)
+    await pnlStrategy(Market.ETH_USD, 100, 2, -2, 10)
 }, 2000)
