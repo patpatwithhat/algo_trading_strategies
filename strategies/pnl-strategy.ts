@@ -44,8 +44,9 @@ async function approximateBaseAssetSize(market: Market, quoteAssetSize: number):
     let marketInf: MarketsResponseObject = await connector.getMarkets(market)
     const price = marketInf[market]['indexPrice']
 
-    //size can only be multiple of 0.0001 (see DYDX API)
-    return Number((quoteAssetSize / Number(price)).toFixed(4))
+    //size can only be multiple of 0.0001 for BTC_USD (see DYDX API)
+    //must be multiple of 0.001 for ETH_USD
+    return Number((quoteAssetSize / Number(price)).toFixed(3))
 }
 
 async function openPosition(market: Market, size: Number): Promise<OrderResponseObject>{
