@@ -28,5 +28,6 @@
   "devDependencies": {
     "@types/jest": "^27.4.1"
   },
+  "keywords": [],
   "description": ""
 }
